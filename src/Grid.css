@@ -1,0 +1,97 @@
+@font-face {
+  font-family: 'Filson Pro Medium';
+  src: url('./fonts/FilsonProMedium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Filson Pro Book';
+  src: url('./fonts/FilsonProBook.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Yleinen tausta ja fontti */
+body {
+  background-color: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: 'Filson Pro Book', sans-serif;
+}
+
+/* Säiliö koko ruudukolle */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(10, 20px); /* Pienempi koko */
+  grid-template-rows: repeat(10, 20px);    /* Pienempi koko */
+  gap: 3px; /* Vähemmän tilaa ruutujen välillä */
+  padding: 10px;
+  border: 2px solid #4d4d4d;
+  border-radius: 0px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Yksittäisten ruutujen tyylit */
+.grid-item {
+  width: 20px;  /* Pienennetty leveys */
+  height: 20px; /* Pienennetty korkeus */
+  background-color: #333;
+  border-radius: 0px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Täytetyt ruudut */
+.grid-item.filled {
+  background-color: #9b9b9b; /* Päivitetty väri */
+}
+
+/* Hover-efekti ruudukolle */
+.grid-container:hover .grid-item:not(.filled) {
+  background-color: #3d3d3d; /* Päivitetty väri */
+}
+
+/* Hover-efekti yksittäiselle ruudulle */
+.grid-item:hover {
+  transform: scale(1);
+  cursor: pointer;
+}
+
+
+.percentage-display {
+  font-family: 'Filson Pro Medium', sans-serif;
+  font-size: 22px;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.percentage-input {
+  font-family: 'Filson Pro Medium', sans-serif;
+  font-size: 22px;
+  width: 50px;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  text-align: center;
+  outline: none;
+  padding: 0;
+  transition: border-bottom 0.3s ease;
+  -moz-appearance: textfield; /* Poistaa spinner-nuolet Firefoxissa */
+}
+
+/* Poistaa spinner-nuolet Chromessa, Safarissa ja Edgessä */
+.percentage-input::-webkit-outer-spin-button,
+.percentage-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Poistaa alleviivauksen, kun kenttä ei ole fokuksessa */
+.percentage-input:focus {
+  outline: none;
+}
+
