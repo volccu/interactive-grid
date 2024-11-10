@@ -98,26 +98,18 @@ function Grid() {
 
   const filledSquares = Math.round((percentage / 100) * GRID_SIZE * GRID_SIZE);
 
-// Funktio, joka laskee oikean prosenttiosuuden
-const handleClickOnGridItem = (index) => {
-  // Lasketaan prosenttiosuus siten, että ensimmäinen ruutu on 1% ja viimeinen on 100%
-  const newPercentage = Math.ceil(((index + 1) / (GRID_SIZE * GRID_SIZE)) * 100);
-  setPercentage(newPercentage);
-  setInputValue(newPercentage);
-};
-
-const gridItems = Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
-  const row = Math.floor(index / GRID_SIZE);
-  const col = index % GRID_SIZE;
-  const bottomUpIndex = (GRID_SIZE - row - 1) * GRID_SIZE + col;
-  return (
-    <div
-      key={index}
-      className={`grid-item ${bottomUpIndex < filledSquares ? "filled" : ""}`}
-      onClick={() => handleClickOnGridItem(bottomUpIndex)}
-    ></div>
-  );
-});
+  const gridItems = Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
+    const row = Math.floor(index / GRID_SIZE);
+    const col = index % GRID_SIZE;
+    const bottomUpIndex = (GRID_SIZE - row - 1) * GRID_SIZE + col;
+    return (
+      <div
+        key={index}
+        className={`grid-item ${bottomUpIndex < filledSquares ? "filled" : ""}`}
+        onClick={() => setPercentage(Math.round((bottomUpIndex / (GRID_SIZE * GRID_SIZE)) * 100))}
+      ></div>
+    );
+  });
 
   return (
     <div onMouseDown={handleMouseDown} onTouchStart={handleTouchStart} className="grid-wrapper no-select">
@@ -136,7 +128,9 @@ const gridItems = Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) =
             autoFocus
           />
         ) : (
-          <span onClick={() => setIsEditing(true)}>amount {percentage}%</span>
+          <span onClick={() => setIsEditing(true)}>
+            amount <span className="clickable">{percentage}%</span>
+          </span>
         )}
       </div>
       {/* Ruudukko säilyy ennallaan */}
@@ -144,6 +138,7 @@ const gridItems = Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) =
     </div>
   );
   
+
   
 }
 
