@@ -30,7 +30,7 @@ body {
   grid-template-rows: repeat(10, 20px);    /* Pienempi koko */
   gap: 3px; /* Vähemmän tilaa ruutujen välillä */
   padding: 10px;
-  border: 2px solid #4d4d4d;
+  border: 2px solid #181818;
   border-radius: 0px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
