@@ -12,15 +12,14 @@ function Grid() {
   const initialValue = useRef(0);
   const inputRef = useRef(null);
 
-  // Päivitä arvo, kun käyttäjä kirjoittaa kenttään
+  // Hiiren ja kosketuksen arvon säätö
   const handleInputChange = (e) => {
     const newValue = Math.max(0, Math.min(100, Number(e.target.value)));
     setInputValue(newValue);
   };
 
-  // Kentän tyhjentäminen ja arvon tallennus
   const handleInputBlur = () => {
-    setPercentage(inputValue || 0); // Varmista, ettei jää tyhjäksi
+    setPercentage(inputValue || 0);
     setIsEditing(false);
   };
 
@@ -31,12 +30,11 @@ function Grid() {
     }
   };
 
-  // Tyhjennä kenttä klikkauksen yhteydessä
   const handleInputFocus = () => {
-    setInputValue(''); // Tyhjennä kenttä klikkauksen yhteydessä
+    setInputValue('');
   };
 
-  // Hiiren vetämistoiminnallisuus (drag up/down)
+  // Hiiren vetäminen alas/ylös
   const handleMouseDown = (e) => {
     setIsDragging(true);
     initialY.current = e.clientY;
@@ -57,24 +55,49 @@ function Grid() {
     setIsDragging(false);
   };
 
+  // Kosketustoiminnallisuus
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    initialY.current = e.touches[0].clientY;
+    initialValue.current = percentage;
+  };
+
+  const handleTouchMove = (e) => {
+    if (isDragging) {
+      const deltaY = initialY.current - e.touches[0].clientY;
+      let newValue = initialValue.current + Math.floor(deltaY / 2);
+      newValue = Math.max(0, Math.min(100, newValue));
+      setPercentage(newValue);
+      setInputValue(newValue);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   useEffect(() => {
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchend", handleTouchEnd);
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     }
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, [isDragging]);
 
-  // Laske täytettyjen ruutujen määrä
   const filledSquares = Math.round((percentage / 100) * GRID_SIZE * GRID_SIZE);
 
-  // Luo ruudukko
   const gridItems = Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
     const row = Math.floor(index / GRID_SIZE);
     const col = index % GRID_SIZE;
@@ -89,7 +112,11 @@ function Grid() {
   });
 
   return (
-    <div onMouseDown={handleMouseDown}>
+    <div
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      className="grid-wrapper"
+    >
       <div className="percentage-display">
         {isEditing ? (
           <input
