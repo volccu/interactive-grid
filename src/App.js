@@ -1,11 +1,11 @@
 import React from "react";
-import "./App.css";
 import Grid from "./Grid";
+import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <h1>Interactive Grid</h1>
+    <div className="app-container dark-mode">
+      <h1 className="center-text no-select">Interactive Grid</h1>
       <Grid />
     </div>
   );
