@@ -12,7 +12,7 @@ function Grid() {
   const initialValue = useRef(0);
   const inputRef = useRef(null);
 
-  // Hiiren ja kosketuksen arvon säätö
+  // Päivitetään arvo input-kentästä
   const handleInputChange = (e) => {
     const newValue = Math.max(0, Math.min(100, Number(e.target.value)));
     setInputValue(newValue);
@@ -36,6 +36,7 @@ function Grid() {
 
   // Hiiren vetäminen alas/ylös
   const handleMouseDown = (e) => {
+    e.preventDefault();
     setIsDragging(true);
     initialY.current = e.clientY;
     initialValue.current = percentage;
@@ -55,14 +56,15 @@ function Grid() {
     setIsDragging(false);
   };
 
-  // Kosketustoiminnallisuus
   const handleTouchStart = (e) => {
+    e.preventDefault();
     setIsDragging(true);
     initialY.current = e.touches[0].clientY;
     initialValue.current = percentage;
   };
 
   const handleTouchMove = (e) => {
+    e.preventDefault();
     if (isDragging) {
       const deltaY = initialY.current - e.touches[0].clientY;
       let newValue = initialValue.current + Math.floor(deltaY / 2);
@@ -76,11 +78,24 @@ function Grid() {
     setIsDragging(false);
   };
 
+  // Funktio, joka laskee oikean prosenttiosuuden
+  const handleClickOnGridItem = (index) => {
+    const newPercentage = Math.ceil(((index + 1) / (GRID_SIZE * GRID_SIZE)) * 100);
+    setPercentage(newPercentage);
+    setInputValue(newPercentage);
+  };
+
+  // Kaksoisklikkaus nollaa arvon
+  const handleDoubleClick = () => {
+    setPercentage(0);
+    setInputValue(0);
+  };
+
   useEffect(() => {
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
       window.addEventListener("touchend", handleTouchEnd);
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
@@ -98,6 +113,7 @@ function Grid() {
 
   const filledSquares = Math.round((percentage / 100) * GRID_SIZE * GRID_SIZE);
 
+  // Luo ruudukko
   const gridItems = Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
     const row = Math.floor(index / GRID_SIZE);
     const col = index % GRID_SIZE;
@@ -106,14 +122,18 @@ function Grid() {
       <div
         key={index}
         className={`grid-item ${bottomUpIndex < filledSquares ? "filled" : ""}`}
-        onClick={() => setPercentage(Math.round((bottomUpIndex / (GRID_SIZE * GRID_SIZE)) * 100))}
+        onClick={() => handleClickOnGridItem(bottomUpIndex)}
       ></div>
     );
   });
 
   return (
-    <div onMouseDown={handleMouseDown} onTouchStart={handleTouchStart} className="grid-wrapper no-select">
-      {/* Estetään tekstin valinta "amount" -tekstistä */}
+    <div
+      onMouseDown={handleMouseDown}
+      onTouchStart={handleTouchStart}
+      onDoubleClick={handleDoubleClick}
+      className="grid-wrapper no-select"
+    >
       <div className="percentage-display no-select">
         {isEditing ? (
           <input
@@ -133,13 +153,9 @@ function Grid() {
           </span>
         )}
       </div>
-      {/* Ruudukko säilyy ennallaan */}
       <div className="grid-container">{gridItems}</div>
     </div>
   );
-  
-
-  
 }
 
 export default Grid;
